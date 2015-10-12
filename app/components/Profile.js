@@ -16,10 +16,9 @@ var Profile = React.createClass({
       repos: []
     }
   },
-  componentDidMount: function() {
-    this.ref = new Firebase("https://resplendent-heat-2037.firebaseio.com/");
+  init: function() {
     var childRef = this.ref.child(this.getParams().username);
-    this.bindAsArray(childRef, 'notes');
+    this.bindAsArray(childRef, 'notes')
 
     helpers.getGithubInfo(this.getParams().username)
       .then(function(dataObj) {
@@ -29,8 +28,16 @@ var Profile = React.createClass({
         });
       }.bind(this));
   },
+  componentDidMount: function() {
+    this.ref = new Firebase("https://resplendent-heat-2037.firebaseio.com/");
+    this.init();
+  },
   componentWillUnmount: function() {
     this.unbind('notes');
+  },
+  componentWillReceiveProps: function() {
+    this.unbind('notes');
+    this.init();
   },
   handleAddNote: function(newNote) {
     this.ref.child(this.getParams().username).set(this.state.notes.concat([newNote]));
